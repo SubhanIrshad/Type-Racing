@@ -1,0 +1,22 @@
+
+body {
+    background-color:ghostwhite;
+}
+
+.container {
+    width:50%;
+    margin:auto;
+}
+
+.container h1 {
+    text-align: center;
+}
+
+#chat {
+    width:100%;
+    resize:none;
+}
+
+#clientMessage {
+    width:100%;
+}
