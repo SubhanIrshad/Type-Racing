@@ -2,7 +2,7 @@ var racetrack = require("./racetrack");
 
 // Manages racetrack objects in allRacetracks
 function racetrackManager() {
-    this.MAX_USERS = 6;
+    this.MAX_USERS = 2;
     this.allRacetracks = [];
 }
 

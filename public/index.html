@@ -2,24 +2,50 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Basic Chat Application</title>
+    <title>Type Racing Game</title>
     <link rel="stylesheet" href="style.css" type="text/css">
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.4/socket.io.js"></script>
+    <script src="https://github.com/downloads/processing-js/processing-js/processing-1.4.1.min.js"></script>
+
 </head>
 <body>
-
     <div class="container">
-        <form>
-            <h1>Race you're friens</h1>
-            <textarea readonly id="chat" class="center"></textarea>
-            <br/>
-            <input id="clientMessage" class="center">
-            <textarea readonly id="playing" class="center"></textarea>
-        </form>
+        <canvas id="canvas"></canvas>
     </div>
+    <script src="/script.js" ></script>
+        <script type="text/processing" data-processing-target="canvas">
 
+            void setup() {
+                size(500, 600);
+                frameRate(30);
+                textSize(12);
+            }
 
-<script src="/script.js"></script>
-</body>
+            void draw() {
+                background(0);
+                for(var i = 0; i < txt.length; i++){
+
+                    fill(255, 0, 0);
+
+                    if(i < correctCharIndex){
+                        fill(0, 255, 0);
+                    }
+
+                    if(i >= currentIndex){
+                        fill(100);
+                    }
+
+                    var x = (i % 35 + 1) * 12;
+                    var y = 20 * (Math.floor(i / 35) + 1)
+                    text(txt[i], x, y);
+                }
+                fill(100, 100, 255);
+                ;
+                text("Who's playing", 10, 540);
+                fill(10, 10, 200)
+                text(playing, 10, 570);
+            }
+        </script>
+    </body>
 </html>

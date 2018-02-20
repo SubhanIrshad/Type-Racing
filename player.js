@@ -1,23 +1,19 @@
 // Player constructor
 function player(socket){
-    this.index = 0,
-    this.position = 0,
+    this.index = 0;
+    this.correctChars = 0;
     this.socket = socket;
-    this.name = "default",
+    this.playing = true;
+    this.name = "default";
     // Will be used as a stack
     this.errorStack = [];
     this.currentRacetrack;
-    this.lowestIndex;
+    this.lowestIndex = 0;
 }
 
-// Sends flags to client based on number of errors
+// Sends player information to client
 player.prototype.sendStatus = function() {
-    if(this.errorStack.length > 0){
-        this.socket.emit("wrongInput");
-    } else {
-        this.socket.emit("correctInput");
-    }
-
+    this.socket.emit("updateCharIndex", {"correctChars":this.correctChars, "currentIndex": this.index});
 }
 
 module.exports = player;

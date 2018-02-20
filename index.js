@@ -39,8 +39,8 @@ io.on("connection", function(socket){
             },1000);
 
             // Updates and sends confirmation to client and players in racetrack
-            client.socket.emit("confirm", track.currentText);
             client.currentRacetrack = track;
+            client.socket.emit("confirm", client.currentRacetrack.currentText);
             client.socket.emit("players", client.currentRacetrack.getAllPlayers());
             client.socket.broadcast.emit("players", client.currentRacetrack.getAllPlayers());
         }
@@ -50,16 +50,19 @@ io.on("connection", function(socket){
     // Checks keypresses according to racetrack's current text
     client.socket.on("keypress", function(message){
 
-        if(client.currentRacetrack.checkKeyPress(client.index, message.keypress)) {
+        if(client.currentRacetrack.checkKeyPress(client.index, message.keypress) && client.playing == true) {
+
+            if(client.errorStack.length <= 0){
+                client.correctChars++;
+            }
 
             // Error stack is used to keep track of errors
             console.log(client.errorStack);
-
             // Clears input area if space bar is pressed and no errors
             if(message.keypress == " " && client.errorStack.length <= 0){
                 client.socket.emit("clearInput");
                 client.lowestIndex = client.index + 1;
-                console.log("lowest set to " + client.index + 1);
+                console.log("lowest set to " + client.lowestIndex);
             }
 
             // Sends finished single when player enters the last character of the text
@@ -67,38 +70,39 @@ io.on("connection", function(socket){
                 console.log("finished race!");
                 client.currentRacetrack.order.push(client);
                 client.socket.emit("finished", "You came in " + client.currentRacetrack.order.length + " Place!");
+                client.playing = false;
             }
-
+            client.index++;
         } else {
             // Pushes index number of incorrect keypress to errorStack
             client.errorStack.push(client.index);
             console.log(client.errorStack);
+            client.index++;
         }
 
-        client.index++;
-        // Sends the client's text color
-        client.sendStatus()
-    });
-
-    client.socket.on("backspace", function(message){;
-
-        // Prevents client from deleting correct inputs
-        if(client.index > client.lowestIndex){
-            client.index -= 1;
-        }
-
-        console.log("backspaced - current index:" + client.index)
-
-        // If error has been fixed, remove error from errorStack
-        if(client.errorStack[client.errorStack.length - 1] == client.index){
-            console.log("error fixed");
-            client.errorStack.pop();
-        }
-
-        // Sends the client's text color
         client.sendStatus();
     });
 
+    client.socket.on("backspace", function(message){
+
+        console.log("C Index: " + client.index + " Low Index: " + client.lowestIndex);
+        // Prevents client from deleting correct inputs
+        if (client.index > client.lowestIndex) {
+            client.index -= 1;
+        }
+        console.log("backspaced - current index:" + client.index)
+        // If error has been fixed, remove error from errorStack
+
+        if (client.errorStack[client.errorStack.length - 1] == client.index) {
+            console.log("error fixed");
+            client.errorStack.pop();
+            } else {
+            if (client.correctChars > client.lowestIndex && client.errorStack.length <= 0) {
+                client.correctChars--;
+            }
+        }
+            client.sendStatus();
+    });
 });
 
 // Allows client to access html, js, and css files

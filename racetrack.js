@@ -12,6 +12,7 @@ function racetrack() {
 // Adds player to racetrack
 racetrack.prototype.joinRace = function(player){
     this.players.push(player);
+
     return true;
 }
 
