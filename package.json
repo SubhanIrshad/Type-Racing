@@ -1,6 +1,6 @@
 {
   "name": "typing-game",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "a basic multiplayer typing game",
   "main": "index.js",
   "author": "",

@@ -1,8 +1,9 @@
 var racetrack = require("./racetrack");
 
+var MAX_USERS = 2;
+
 // Manages racetrack objects in allRacetracks
 function racetrackManager() {
-    this.MAX_USERS = 2;
     this.allRacetracks = [];
 }
 
@@ -17,7 +18,7 @@ racetrackManager.prototype.findRace = function() {
     }
 
     // If last racetrack has room then it will return it
-    if(this.allRacetracks[this.allRacetracks.length - 1].players.length < this.MAX_USERS)
+    if(this.allRacetracks[this.allRacetracks.length - 1].players.length < MAX_USERS)
     {
         return this.allRacetracks[this.allRacetracks.length - 1];
     }
@@ -29,3 +30,4 @@ racetrackManager.prototype.findRace = function() {
 }
 
 module.exports = racetrackManager;
+module.exports.MAX_USERS = MAX_USERS;

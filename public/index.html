@@ -12,6 +12,7 @@
 <body>
     <div class="container">
         <canvas id="canvas"></canvas>
+        <p><a href="https://github.com/SubhanIrshad/Type-Racing">Check out the source code here!</a></p>
     </div>
     <script src="/script.js" ></script>
         <script type="text/processing" data-processing-target="canvas">
@@ -33,15 +34,15 @@
                     }
 
                     if(i >= currentIndex){
-                        fill(100);
+                        fill(200);
                     }
 
                     var x = (i % 35 + 1) * 12;
                     var y = 20 * (Math.floor(i / 35) + 1)
                     text(txt[i], x, y);
+                    rect(x, y + 3, 20, 3);
                 }
                 fill(100, 100, 255);
-                ;
                 text("Who's playing", 10, 540);
                 fill(10, 10, 200)
                 text(playing, 10, 570);

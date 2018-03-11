@@ -1,9 +1,14 @@
-var text = require("./text.js");
+var text = require("./text");
+var racetrackManager = require("./racetrackManager");
 var currentText = new text();
 
 // racetrack objects manage players
 function racetrack() {
     this.players = [];
+    // Time the game has started for (in seconds)
+    this.time = 0;
+    // Time before the game begins (countdown)
+    this.timeLeft = 5000;
     // This stores the order in which players win
     this.order = [];
     this.currentText = currentText.getRandomText();
@@ -12,7 +17,20 @@ function racetrack() {
 // Adds player to racetrack
 racetrack.prototype.joinRace = function(player){
     this.players.push(player);
-
+    if(this.players.length >= 2){
+        console.log("b1");
+        var countdown = setInterval(function(){
+            console.log("b2");
+            if(this.timeLeft > 0){
+                this.timeLeft -= 1000;
+            } else {
+                clearInterval(countdown);
+                setInterval(function(){
+                    this.time += 1;
+                }.bind(this), 1000);
+            }
+        }.bind(this), 1000);
+    }
     return true;
 }
 

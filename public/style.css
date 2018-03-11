@@ -3,14 +3,21 @@ body {
     background-color:black;
 }
 
+p{
+    color:white;
+}
+
+a {
+    color:white;
+}
+
 .container {
-    width:50%;
     margin:auto;
+    width:50%;
+    height:50%;
+    text-align:center;
 }
 
 #canvas {
-    position:absolute;
-    display:inline-block;
     margin:auto;
-    padding:0px;
 }

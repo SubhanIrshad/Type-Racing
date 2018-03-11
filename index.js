@@ -31,16 +31,27 @@ io.on("connection", function(socket){
 
         if(track.joinRace(client)){
 
-            // Update client regarding players in racetrack every second
             setInterval(function (){
                 var people = client.currentRacetrack.getAllPlayers()
                 client.socket.emit("players", people);
-               // client.socket.broadcast.emit("players", people);
-            },1000);
+                if(client.currentRacetrack.players.length < racetrackManager.MAX_USERS){
+                    client.socket.emit("confirm", "Waiting for " + (racetrackManager.MAX_USERS -
+                        client.currentRacetrack.players.length) + " more players");
+                }else{
+                    var countdown = setInterval(function(){
+                        if(client.currentRacetrack.timeLeft > 0) {
+                            client.socket.emit("confirm", "Game starting in "
+                                + client.currentRacetrack.timeLeft/1000 + " seconds");
+                        } else {
+                            client.socket.emit("confirm", client.currentRacetrack.currentText);
+                            clearInterval(countdown);
+                        }
+                    }, 1000/30);
+                }
+            },1000/30);
 
             // Updates and sends confirmation to client and players in racetrack
             client.currentRacetrack = track;
-            client.socket.emit("confirm", client.currentRacetrack.currentText);
             client.socket.emit("players", client.currentRacetrack.getAllPlayers());
             client.socket.broadcast.emit("players", client.currentRacetrack.getAllPlayers());
         }
@@ -50,7 +61,11 @@ io.on("connection", function(socket){
     // Checks keypresses according to racetrack's current text
     client.socket.on("keypress", function(message){
 
-        if(client.currentRacetrack.checkKeyPress(client.index, message.keypress) && client.playing == true) {
+        if(client.currentRacetrack.players.length < racetrackManager.MAX_USERS || client.currentRacetrack.timeLeft > 0){
+            return;
+        }
+
+        if(client.currentRacetrack.checkKeyPress(client.index, message.keypress) && client.playing) {
 
             if(client.errorStack.length <= 0){
                 client.correctChars++;
@@ -69,7 +84,9 @@ io.on("connection", function(socket){
             if(client.index == client.currentRacetrack.currentText.length - 1){
                 console.log("finished race!");
                 client.currentRacetrack.order.push(client);
-                client.socket.emit("finished", "You came in " + client.currentRacetrack.order.length + " Place!");
+                client.socket.emit("finished", "You came in " + client.currentRacetrack.order.length + " Place!"
+                + " \nWords per minute: " + Math.floor(client.currentRacetrack.currentText.length/5 * 60 /
+                    client.currentRacetrack.time));
                 client.playing = false;
             }
             client.index++;
@@ -84,6 +101,10 @@ io.on("connection", function(socket){
     });
 
     client.socket.on("backspace", function(message){
+
+        if(client.currentRacetrack.players.length < racetrackManager.MAX_USERS || client.currentRacetrack.timeLeft > 0){
+            return;
+        }
 
         console.log("C Index: " + client.index + " Low Index: " + client.lowestIndex);
         // Prevents client from deleting correct inputs
